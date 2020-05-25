@@ -4,42 +4,43 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"log"
+	"math"
 )
 
-func decimal_to_binary(number int) {
-
-	if number == 0 { // Default case
-		fmt.Println("0")
-		return
+func decimalToBinary(decimal int) (int, error) {
+	// Exception case
+	if decimal == 0 {
+		return 0, fmt.Errorf("can't devide by: %d", decimal)
 	}
 
-	decimal := number
-	binary := []int{}
-
-	for decimal > 0 {
-		binary = append( binary, decimal%2 )
+	binary := 0
+	for k := 0; decimal > 0; {
+		binary += decimal%2 * int(math.Pow10(k))
 		decimal /= 2
+		k++
 	}
 
-	for i:=1; i<len(binary)+1; i++ {
-		fmt.Print( binary[len(binary)-i] )
-	}
-	fmt.Print("\n")
+	return binary, nil
 }
 
 func main() {
-
-	if len(os.Args) > 1 {
-		arg := os.Args[1]
-		decimal, err := strconv.Atoi(arg)
-		if err == nil { // Argument is a number
-			/* MAGIC */
-			decimal_to_binary(decimal)
-		} else { // Argument is not a number
-			fmt.Println("Argument must be a number!")
-		}
-	} else { // No arguments
-		fmt.Println("You must enter an argument!")
+	if len(os.Args) < 2 {
+		log.Fatalln("You must enter an argument!")
 	}
 
+	// Argument is a number
+	arg := os.Args[1]
+	decimal, err := strconv.Atoi(arg)
+	if err != nil {
+		log.Fatalf("Argument must be a number: %v\n", err)
+	}
+
+	// MAGIC
+	binary, err := decimalToBinary(decimal)
+	if err != nil {
+		log.Fatalf("Error converting decimal to binary: %v", err)
+	}
+
+	fmt.Println(binary)
 }
