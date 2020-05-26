@@ -9,9 +9,19 @@ import (
 )
 
 func decimalToBinary(decimal int) (int, error) {
-	// Exception case
+	// Negative number
+	if decimal < 0 {
+		return 0, fmt.Errorf("can't convert negative number: %d", decimal)
+	}
+
+	// Number too big
+	if decimal > 524287 {
+		return 0, fmt.Errorf("number has to be smaller than 524288: %d", decimal)
+	}
+
+	// Zero case
 	if decimal == 0 {
-		return 0, fmt.Errorf("can't devide by: %d", decimal)
+		return 0, nil
 	}
 
 	binary := 0
@@ -20,7 +30,6 @@ func decimalToBinary(decimal int) (int, error) {
 		decimal /= 2
 		k++
 	}
-
 	return binary, nil
 }
 
@@ -36,11 +45,12 @@ func main() {
 		log.Fatalf("Argument must be a number: %v\n", err)
 	}
 
-	// MAGIC
+	// Argument is negative
 	binary, err := decimalToBinary(decimal)
 	if err != nil {
 		log.Fatalf("Error converting decimal to binary: %v", err)
 	}
 
+	// MAGIC
 	fmt.Println(binary)
 }
